@@ -128,6 +128,8 @@ strong { font-weight: 700; }
 .grid-3 { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 16px; }
 @media (max-width: 760px) { .grid-2, .grid-3 { grid-template-columns: minmax(0, 1fr); } }
 .scroll-x { overflow-x: auto; -webkit-overflow-scrolling: touch; }
+.scroll-hint { display: none; margin: 0 0 6px; font-size: .8rem; color: var(--muted); }
+@media (max-width: 900px) { .scroll-hint { display: block; } }
 .scroll-x > svg { min-width: 640px; }
 
 /* ---------- 상단 막대 ---------- */
@@ -640,6 +642,47 @@ tr.changed td { animation: rowflash 1.4s ease; }
 @media (max-width: 560px) { .utxo { grid-template-columns: minmax(0, 1fr); } .utxo .arr { transform: rotate(90deg); padding: 6px 0; } }
 .tree { font-family: var(--font-mono); font-size: .8rem; line-height: 1.75; background: var(--sheet); border: 1px solid var(--rule); border-radius: var(--r-md); padding: 14px 16px; margin: 20px 0; max-width: 46rem; overflow-x: auto; white-space: pre; color: var(--ink-2); }
 .tree b { color: var(--ink); font-weight: 600; }
+/* 체인 그림: 제네시스부터 이어지는 블록과 채굴 */
+#fig-chain .card { fill: var(--sheet); stroke: var(--rule-2); stroke-width: 1.2; transition: stroke .2s ease, fill .2s ease; }
+#fig-chain .card.genesis { stroke: var(--ink); stroke-width: 1.6; }
+#fig-chain .card.newb { fill: var(--paper); stroke: var(--ink-2); stroke-dasharray: 6 4; }
+#fig-chain .card.newb.done { fill: var(--sheet); stroke: var(--ink); stroke-width: 1.6; stroke-dasharray: none; }
+#fig-chain .cdiv { stroke: var(--rule); stroke-width: 1; }
+#fig-chain .cv-bg { fill: var(--sheet-2); }
+#fig-chain .ct { fill: var(--ink); font-size: 12.5px; font-weight: 700; }
+#fig-chain .cd, #fig-chain .cl { fill: var(--muted); font-size: 10.5px; }
+#fig-chain .cvv { fill: var(--ink-2); font-family: var(--font-mono); font-size: 11px; }
+#fig-chain .cvv .z { fill: var(--ink); font-weight: 700; }
+#fig-chain .cvp { fill: var(--ink-2); font-size: 11px; }
+#fig-chain .stamp { fill: color-mix(in oklab, var(--good) 12%, var(--sheet)); stroke: color-mix(in oklab, var(--good) 55%, transparent); stroke-width: 1; }
+#fig-chain .stamp-t { fill: var(--good-text); font-size: 10.5px; font-weight: 700; }
+#fig-chain .lnk { stroke: var(--ink); stroke-width: 1.6; fill: none; marker-end: url(#ahCh); }
+#fig-chain .lnk.pending { stroke: var(--muted); stroke-dasharray: 5 4; marker-end: url(#ahChDim); }
+#fig-chain .ahch-p { fill: var(--ink); }
+#fig-chain .ahchd-p { fill: var(--muted); }
+#fig-chain .fb { fill: var(--sheet); stroke: var(--rule-2); stroke-width: 1.2; transition: stroke .2s ease; }
+#fig-chain .fb.active { stroke: var(--ink); stroke-width: 2.2; }
+#fig-chain .fbt { fill: var(--ink); font-size: 12.5px; font-weight: 700; }
+#fig-chain .fbs { fill: var(--ink-2); font-size: 11px; }
+#fig-chain .fl { stroke: var(--ink-2); stroke-width: 1.4; fill: none; marker-end: url(#ahCh); }
+#fig-chain .fl.loop.on { stroke: var(--ink); stroke-width: 2; stroke-dasharray: 7 5; animation: flow .9s linear infinite; }
+#fig-chain .fl.up { stroke: var(--muted); stroke-dasharray: 5 4; marker-end: url(#ahChDim); }
+#fig-chain .fl.up.on { stroke: var(--ink); stroke-width: 2; stroke-dasharray: none; marker-end: url(#ahCh); }
+@media (prefers-reduced-motion: reduce) { #fig-chain .fl.loop.on { animation: none; } }
+#fig-chain .scroll-x > svg { min-width: 880px; }
+.chain-demo { display: grid; grid-template-columns: minmax(0, 1.15fr) minmax(0, 1fr); gap: 14px; margin-top: 14px; align-items: start; }
+@media (max-width: 760px) { .chain-demo { grid-template-columns: minmax(0, 1fr); } }
+.chain-demo > div { background: var(--sheet); border: 1px solid var(--rule); border-radius: var(--r-md); padding: 12px 14px; display: grid; gap: 8px; min-width: 0; }
+.chain-demo h5 { margin: 0; font-size: .88rem; line-height: 1.45; }
+.chain-demo p { margin: 0; }
+.mine-log { list-style: none; margin: 0; padding: 0; display: grid; gap: 3px; font-family: var(--font-mono); font-size: .78rem; }
+.mine-log li { display: grid; grid-template-columns: 9.4rem minmax(0, 1fr) 1.2rem; gap: 8px; align-items: baseline; }
+.mine-log .h { color: var(--ink-2); overflow-wrap: anywhere; }
+.mine-log .h b { color: var(--ink); }
+.mine-log .m { font-weight: 700; text-align: right; }
+.mine-log .m.ok { color: var(--good-text); }
+.mine-log .m.no { color: var(--crit-text); }
+.mine-log li.gap { display: block; color: var(--muted); font-family: var(--font-body); font-size: .8rem; }
 </style>
 </head>
 <body>
@@ -837,6 +880,172 @@ tr.changed td { animation: rowflash 1.4s ease; }
           <li><strong>타임스탬프와 난이도 목표</strong> · 언제 만들어졌는지, 해시가 얼마나 작아야 하는지 적습니다.</li>
           <li><strong>논스</strong>(nonce) · 채굴자가 정답을 찾으려고 계속 바꿔 넣는 숫자입니다.</li>
         </ul>
+        <p>아래 그림은 2009년 1월 3일 제네시스 블록에서 시작해 지금까지 이어진 비트코인 체인과, 그 끝에 새 블록이 붙는 과정인 채굴을 그린 것입니다.</p>
+      </div>
+      <figure class="diagram" id="fig-chain">
+        <p class="chart-title">제네시스 블록부터 이어지는 체인 <span>(위) · 새 블록이 붙는 방법, 채굴 (아래)</span></p>
+        <p class="scroll-hint">그림을 옆으로 밀면 최신 블록과 새 블록까지 볼 수 있습니다.</p>
+        <div class="scroll-x">
+          <svg viewBox="0 0 1060 428" role="img" aria-label="제네시스 블록 0번부터 1번, 2번을 거쳐 최신 블록까지 각 블록의 해시가 다음 블록의 이전 블록 해시로 복사돼 이어지는 체인. 아래에는 새 블록이 앞 블록 해시 적기, 거래 모으기, 논스 넣고 해시, 목표값 비교, 전파와 검증의 다섯 단계를 거쳐 체인 끝에 붙는 과정.">
+            <defs>
+              <marker id="ahCh" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path class="ahch-p" d="M0,0 L10,5 L0,10 z"/></marker>
+              <marker id="ahChDim" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path class="ahchd-p" d="M0,0 L10,5 L0,10 z"/></marker>
+            </defs>
+            <!-- 블록 사이 연결: 앞 블록의 해시 → 다음 블록의 '이전 블록 해시' -->
+            <path class="lnk" d="M178,212 H195 V92 H210"/>
+            <path class="lnk" d="M382,212 H399 V92 H414"/>
+            <path class="lnk" d="M586,212 H596 V92 H608"/>
+            <path class="lnk" d="M648,92 H662"/>
+            <path class="lnk pending" id="newLink" d="M834,212 H856 V92 H876"/>
+            <text class="ct" x="628" y="97" text-anchor="middle">⋯</text>
+            <text class="cl" x="628" y="132" text-anchor="middle">약 97만 개</text>
+            <text class="cl" x="628" y="147" text-anchor="middle">블록</text>
+            <!-- 블록 #0 · 제네시스 -->
+            <rect class="card genesis" x="8" y="12" width="170" height="212" rx="10"/>
+            <rect class="stamp" x="122" y="3" width="54" height="18" rx="9"/>
+            <text class="stamp-t" id="chainOk0" x="149" y="16" text-anchor="middle">검증 중</text>
+            <text class="ct" x="20" y="36">블록 #0 · 제네시스</text>
+            <text class="cd" x="20" y="52">2009.1.3 18:15 UTC</text>
+            <line class="cdiv" x1="8" x2="178" y1="60" y2="60"/>
+            <text class="cl" x="20" y="78">이전 블록 해시 · 없음</text>
+            <rect class="cv-bg" x="16" y="83" width="154" height="17" rx="4"/>
+            <text class="cvv" x="22" y="96"><tspan class="z">0000000000000000</tspan>…</text>
+            <text class="cl" x="20" y="118">머클 루트 · 거래 요약</text>
+            <text class="cvv" x="22" y="133">4a5e1e4baab89f3a…</text>
+            <text class="cl" x="20" y="154">논스</text>
+            <text class="cvv" x="22" y="169">2,083,236,893</text>
+            <line class="cdiv" x1="8" x2="178" y1="180" y2="180"/>
+            <text class="cl" x="20" y="198">이 블록의 해시</text>
+            <rect class="cv-bg" x="16" y="203" width="154" height="17" rx="4"/>
+            <text class="cvv" x="22" y="216"><tspan class="z">0000000000</tspan>19d668…</text>
+            <!-- 블록 #1 -->
+            <rect class="card" x="212" y="12" width="170" height="212" rx="10"/>
+            <rect class="stamp" x="326" y="3" width="54" height="18" rx="9"/>
+            <text class="stamp-t" id="chainOk1" x="353" y="16" text-anchor="middle">검증 중</text>
+            <text class="ct" x="224" y="36">블록 #1</text>
+            <text class="cd" x="224" y="52">2009.1.9 02:54 UTC</text>
+            <line class="cdiv" x1="212" x2="382" y1="60" y2="60"/>
+            <text class="cl" x="224" y="78">이전 블록 해시</text>
+            <rect class="cv-bg" x="220" y="83" width="154" height="17" rx="4"/>
+            <text class="cvv" x="226" y="96"><tspan class="z">0000000000</tspan>19d668…</text>
+            <text class="cl" x="224" y="118">머클 루트 · 거래 요약</text>
+            <text class="cvv" x="226" y="133">0e3e2357e806b6cd…</text>
+            <text class="cl" x="224" y="154">논스</text>
+            <text class="cvv" x="226" y="169">2,573,394,689</text>
+            <line class="cdiv" x1="212" x2="382" y1="180" y2="180"/>
+            <text class="cl" x="224" y="198">이 블록의 해시</text>
+            <rect class="cv-bg" x="220" y="203" width="154" height="17" rx="4"/>
+            <text class="cvv" x="226" y="216"><tspan class="z">00000000</tspan>839a8e68…</text>
+            <!-- 블록 #2 -->
+            <rect class="card" x="416" y="12" width="170" height="212" rx="10"/>
+            <rect class="stamp" x="530" y="3" width="54" height="18" rx="9"/>
+            <text class="stamp-t" id="chainOk2" x="557" y="16" text-anchor="middle">검증 중</text>
+            <text class="ct" x="428" y="36">블록 #2</text>
+            <text class="cd" x="428" y="52">2009.1.9 02:55 UTC</text>
+            <line class="cdiv" x1="416" x2="586" y1="60" y2="60"/>
+            <text class="cl" x="428" y="78">이전 블록 해시</text>
+            <rect class="cv-bg" x="424" y="83" width="154" height="17" rx="4"/>
+            <text class="cvv" x="430" y="96"><tspan class="z">00000000</tspan>839a8e68…</text>
+            <text class="cl" x="428" y="118">머클 루트 · 거래 요약</text>
+            <text class="cvv" x="430" y="133">9b0fc92260312ce4…</text>
+            <text class="cl" x="428" y="154">논스</text>
+            <text class="cvv" x="430" y="169">1,639,830,024</text>
+            <line class="cdiv" x1="416" x2="586" y1="180" y2="180"/>
+            <text class="cl" x="428" y="198">이 블록의 해시</text>
+            <rect class="cv-bg" x="424" y="203" width="154" height="17" rx="4"/>
+            <text class="cvv" x="430" y="216"><tspan class="z">00000000</tspan>6a625f06…</text>
+            <!-- 최신 블록 (예시) -->
+            <rect class="card" x="664" y="12" width="170" height="212" rx="10"/>
+            <text class="ct" x="676" y="36">최신 블록 · #97만 무렵</text>
+            <text class="cd" x="676" y="52">2026년 11월 · 예시 값</text>
+            <line class="cdiv" x1="664" x2="834" y1="60" y2="60"/>
+            <text class="cl" x="676" y="78">이전 블록 해시</text>
+            <rect class="cv-bg" x="672" y="83" width="154" height="17" rx="4"/>
+            <text class="cvp" x="678" y="96">(앞 블록의 해시)</text>
+            <text class="cl" x="676" y="118">머클 루트 · 거래 요약</text>
+            <text class="cvp" x="678" y="133">(거래 수천 건의 요약)</text>
+            <text class="cl" x="676" y="154">논스</text>
+            <text class="cvp" x="678" y="169">(채굴자가 찾은 값)</text>
+            <line class="cdiv" x1="664" x2="834" y1="180" y2="180"/>
+            <text class="cl" x="676" y="198">이 블록의 해시 · 0이 약 19개</text>
+            <rect class="cv-bg" x="672" y="203" width="154" height="17" rx="4"/>
+            <text class="cvv" x="678" y="216"><tspan class="z">0000000000000000000</tspan>…</text>
+            <!-- 새 블록 (채굴 대상) -->
+            <rect class="card newb" id="newCard" x="878" y="12" width="170" height="212" rx="10"/>
+            <text class="ct" id="newTitle" x="890" y="36">새 블록 · 채굴 전</text>
+            <text class="cd" x="890" y="52">지금</text>
+            <line class="cdiv" x1="878" x2="1048" y1="60" y2="60"/>
+            <text class="cl" x="890" y="78">이전 블록 해시 · 복사</text>
+            <rect class="cv-bg" x="886" y="83" width="154" height="17" rx="4"/>
+            <text class="cvv" x="892" y="96"><tspan class="z">0000000000000000000</tspan>…</text>
+            <text class="cl" x="890" y="118">머클 루트 · 거래 요약</text>
+            <text class="cvp" x="892" y="133">(멤풀의 거래 요약)</text>
+            <text class="cl" x="890" y="154">논스</text>
+            <text class="cvv" id="newNonce" x="892" y="169">?</text>
+            <line class="cdiv" x1="878" x2="1048" y1="180" y2="180"/>
+            <text class="cl" x="890" y="198">이 블록의 해시</text>
+            <rect class="cv-bg" x="886" y="203" width="154" height="17" rx="4"/>
+            <text class="cvp" id="newHash" x="892" y="216">목표값보다 작아야 함</text>
+            <!-- 채굴 과정 -->
+            <text class="ct" x="8" y="258">새 블록이 체인에 붙는 방법 · 채굴</text>
+            <path class="fl" d="M188,322 H216"/>
+            <path class="fl" d="M398,322 H426"/>
+            <path class="fl" d="M608,322 H636"/>
+            <path class="fl" d="M818,322 H876"/>
+            <text class="fbs" x="847" y="314" text-anchor="middle">예</text>
+            <path class="fl loop" id="loopArrow" d="M728,370 V398 H518 V372"/>
+            <text class="fbs" x="623" y="414" text-anchor="middle">아니요 · 논스를 바꿔 ③부터 다시</text>
+            <path class="fl up" id="upArrow" d="M963,274 V228"/>
+            <text class="fbs" x="971" y="254">연결</text>
+            <rect class="fb" data-step="1" x="8" y="274" width="180" height="96" rx="8"/>
+            <text class="fbt" x="20" y="296">① 앞 블록의 해시 적기</text>
+            <text class="fbs" x="20" y="316">최신 블록의 해시를</text>
+            <text class="fbs" x="20" y="332">새 블록 머리말에 복사</text>
+            <text class="cvv" x="20" y="356"><tspan class="z">0000000000000000000</tspan>…</text>
+            <rect class="fb" data-step="2" x="218" y="274" width="180" height="96" rx="8"/>
+            <text class="fbt" x="230" y="296">② 거래 모으기</text>
+            <text class="fbs" x="230" y="316">멤풀에서 거래를 골라</text>
+            <text class="fbs" x="230" y="332">머클 루트로 요약</text>
+            <text class="fbs" x="230" y="348">수수료가 높은 거래부터</text>
+            <rect class="fb" data-step="3" x="428" y="274" width="180" height="96" rx="8"/>
+            <text class="fbt" x="440" y="296">③ 논스 넣고 해시</text>
+            <text class="fbs" x="440" y="316">논스 = 0, 1, 2, 3, …</text>
+            <text class="fbs" x="440" y="332">헤더 80바이트를</text>
+            <text class="fbs" x="440" y="348">SHA-256으로 두 번</text>
+            <rect class="fb" data-step="4" x="638" y="274" width="180" height="96" rx="8"/>
+            <text class="fbt" x="650" y="296">④ 목표값과 비교</text>
+            <text class="fbs" x="650" y="316">해시 &lt; 목표값이면 성공</text>
+            <text class="fbs" x="650" y="332">앞자리 0이 충분히</text>
+            <text class="fbs" x="650" y="348">많아야 한다는 뜻</text>
+            <rect class="fb" data-step="5" x="878" y="274" width="170" height="96" rx="8"/>
+            <text class="fbt" x="890" y="296">⑤ 전파와 검증</text>
+            <text class="fbs" x="890" y="316">다른 노드는 해시를</text>
+            <text class="fbs" x="890" y="332">한 번만 계산해 확인하고</text>
+            <text class="fbs" x="890" y="348">체인 끝에 붙임</text>
+          </svg>
+        </div>
+        <div class="chain-demo">
+          <div>
+            <h5>제네시스 블록을 찾기까지 · 헤더는 그대로 두고 논스만 바꿨을 때</h5>
+            <ol class="mine-log">
+              <li><span>논스 0</span><span class="h">2bc1a7f50ab3c6d7…</span><span class="m no">✗</span></li>
+              <li><span>논스 1</span><span class="h">936f9d7885e64168…</span><span class="m no">✗</span></li>
+              <li><span>논스 2</span><span class="h">7eef970e6215107c…</span><span class="m no">✗</span></li>
+              <li class="gap">⋮ 논스를 0부터 하나씩 올렸다면 약 21억 번째</li>
+              <li><span>논스 2,083,236,893</span><span class="h"><b>0000000000</b>19d668…</span><span class="m ok">✓</span></li>
+            </ol>
+            <p class="small muted">당시 목표값은 해시가 00000000ffff…보다 작아야 했습니다. 앞자리 0이 8개 이상이어야 한다는 뜻이고, 제네시스 블록의 해시는 0이 10개로 시작합니다.</p>
+          </div>
+          <div>
+            <h5>직접 채굴해 보기</h5>
+            <p class="small">그림 오른쪽 끝의 새 블록을 이 페이지가 실제 비트코인과 같은 방식(헤더 80바이트를 SHA-256으로 두 번)으로 채굴합니다. 난이도만 앞자리 0 네 개로 낮췄습니다.</p>
+            <div class="btnrow"><button type="button" class="btn" id="chainMineBtn">새 블록 채굴하기</button><button type="button" class="btn ghost" id="chainMineReset">처음으로</button></div>
+            <p class="status-line" id="chainMineStatus" aria-live="polite">아직 채굴 전입니다. 새 블록의 논스는 '?'로 비어 있고, 앞 블록과 이어지는 선도 점선입니다.</p>
+          </div>
+        </div>
+        <figcaption>#0~#2는 실제 비트코인 블록입니다. 이 페이지가 각 블록의 헤더를 직접 SHA-256으로 두 번 해시해 알려진 블록 해시와 같은지 확인하고 ✓ 검증을 붙입니다. 각 블록의 해시(아래 칸)가 다음 블록의 '이전 블록 해시'(위 칸)로 복사되기 때문에, 중간 블록 하나만 고쳐도 그 뒤의 연결이 모두 끊어집니다. 최신 블록의 값은 모양만 보여 주는 예시입니다.</figcaption>
+      </figure>
+      <div class="prose">
         <p>블록 2의 거래 내용을 몰래 고치면 블록 2의 해시가 바뀝니다. 블록 3은 예전 블록 2의 해시를 적어 두었으니 연결이 끊어지고, 그 뒤 블록도 연쇄적으로 무효가 됩니다. 고친 흔적을 지우려면 그 뒤 블록을 전부 다시 채굴해야 합니다.</p>
       </div>
       <div class="lab" id="lab-chain">
@@ -1206,6 +1415,7 @@ tr.changed td { animation: rowflash 1.4s ease; }
           <button type="button" data-flow="withdraw" aria-pressed="false">출금</button>
           <button type="button" data-flow="refill" aria-pressed="false">핫월렛 보충</button>
         </div>
+        <p class="scroll-hint">그림을 옆으로 밀면 지갑 시스템과 블록체인까지 볼 수 있습니다.</p>
         <div class="scroll-x">
           <svg viewBox="0 0 1040 510" style="min-width:820px" role="img" aria-label="거래소 구조도: 고객 앱, 거래소 서버(매칭 엔진, 내부 원장, 출금 심사), 지갑 시스템(입금 주소, 핫월렛, 웜월렛, 콜드월렛), 블록체인 사이의 흐름">
             <defs>
@@ -2255,6 +2465,107 @@ if (typeof module !== 'undefined') module.exports = CL;
     blocks.forEach((_, i) => mineSync(i));
     setHint();
     render(true);
+  });
+
+  /* ---------- 체인 그림: 실제 블록 검증과 새 블록 채굴 ---------- */
+  safe('chainfig', () => {
+    const fig = $('#fig-chain');
+    if (!fig) return;
+    const rev = (hex) => hex.match(/../g).reverse().join('');
+    const le32 = (n) => rev((n >>> 0).toString(16).padStart(8, '0'));
+    const dsha = (bytes) => CL.sha256(CL.sha256(bytes));
+    const display = (digest) => rev(CL.toHex(digest)); // 비트코인은 해시를 바이트 순서를 뒤집어 표시한다
+    const header = (ver, prev, merkle, time, bits, nonce) => le32(ver) + rev(prev) + rev(merkle) + le32(time) + le32(bits) + le32(nonce);
+    const G = '000000000019d6689c085ae165831e934ff763ae46a2a6c172b3f1b60a8ce26f';
+    const B1 = '00000000839a8e6886ab5951d76f411475428afc90947ee320161bbf18eb6048';
+    const B2 = '000000006a625f06636b8bb6ac7b960a8d03705d1ace08b1a19da3fdcc99ddbd';
+    const REAL = [
+      ['0'.repeat(64), '4a5e1e4baab89f3a32518a88c31bc87f618f76673e2cc77ab2127b7afdeda33b', 1231006505, 2083236893, G],
+      [G, '0e3e2357e806b6cdb1f70b54c3a3a17b6714ee1f0e68bebb44a74b1efd512098', 1231469665, 2573394689, B1],
+      [B1, '9b0fc92260312ce44e74ef369f5c66bbb85848f2eddd5a7a1cde251e54ccfdd5', 1231469744, 1639830024, B2],
+    ];
+    REAL.forEach(([prev, merkle, time, nonce, want], i) => {
+      const got = display(dsha(CL.fromHex(header(1, prev, merkle, time, 0x1d00ffff, nonce))));
+      const t = $('#chainOk' + i, fig);
+      if (t) t.textContent = got === want ? '✓ 검증' : '✗ 불일치';
+    });
+    const nonceT = $('#newNonce', fig), hashT = $('#newHash', fig), card = $('#newCard', fig), title = $('#newTitle', fig);
+    const link = $('#newLink', fig), loop = $('#loopArrow', fig), up = $('#upArrow', fig), boxes = $$('.fb', fig);
+    const btn = $('#chainMineBtn'), resetBtn = $('#chainMineReset'), status = $('#chainMineStatus');
+    const PREV = '0'.repeat(19) + CL.sha256hex('예시 최신 블록').slice(0, 45);
+    const MERKLE = CL.sha256hex('멤풀에서 고른 예시 거래들');
+    let timer = null, running = false;
+    const active = (steps) => boxes.forEach((b) => b.classList.toggle('active', steps.includes(b.dataset.step)));
+    function showHash(hx) {
+      if (!hx) { hashT.setAttribute('class', 'cvp'); hashT.textContent = '목표값보다 작아야 함'; return; }
+      const z = hx.match(/^0*/)[0].length;
+      hashT.setAttribute('class', 'cvv');
+      hashT.replaceChildren(sv('tspan', { class: 'z' }, hx.slice(0, z)), document.createTextNode(hx.slice(z, Math.max(z, 16)) + '…'));
+    }
+    function reset() {
+      clearTimeout(timer);
+      running = false;
+      nonceT.textContent = '?';
+      showHash(null);
+      card.classList.remove('done');
+      link.classList.add('pending');
+      loop.classList.remove('on');
+      up.classList.remove('on');
+      title.textContent = '새 블록 · 채굴 전';
+      active([]);
+      btn.disabled = false;
+      btn.textContent = '새 블록 채굴하기';
+      status.textContent = "아직 채굴 전입니다. 새 블록의 논스는 '?'로 비어 있고, 앞 블록과 이어지는 선도 점선입니다.";
+    }
+    function finish(nonce, hx, tries, ms) {
+      running = false;
+      loop.classList.remove('on');
+      up.classList.add('on');
+      link.classList.remove('pending');
+      card.classList.add('done');
+      title.textContent = '새 블록 · 연결됨';
+      active(['5']);
+      nonceT.textContent = fmt(nonce);
+      showHash(hx);
+      btn.disabled = false;
+      btn.textContent = '한 번 더 채굴하기';
+      status.textContent = `✓ 논스 ${fmt(nonce)}에서 해시가 0000으로 시작해 목표값 아래로 들어왔습니다. ${fmt(tries)}번 시도, ${(ms / 1000).toFixed(2)}초 걸렸습니다. 다른 노드는 이 해시를 한 번만 계산해 보면 맞는지 알 수 있습니다. 실제 비트코인은 앞자리 0이 19개 안팎이라 전 세계 채굴기가 함께 계산해도 평균 10분이 걸립니다.`;
+    }
+    function mine() {
+      if (running) return;
+      running = true;
+      btn.disabled = true;
+      card.classList.remove('done');
+      link.classList.add('pending');
+      up.classList.remove('on');
+      loop.classList.add('on');
+      title.textContent = '새 블록 · 채굴 중';
+      active(['3', '4']);
+      const hdr = CL.fromHex(header(0x20000000, PREV, MERKLE, Math.floor(Date.now() / 1000), 0x1d00ffff, 0));
+      let nonce = 0, tries = 0, last = null;
+      const t0 = performance.now();
+      const step = () => {
+        const end = performance.now() + 28;
+        while (performance.now() < end) {
+          for (let k = 0; k < 256; k++) {
+            hdr[76] = nonce & 255; hdr[77] = (nonce >>> 8) & 255; hdr[78] = (nonce >>> 16) & 255; hdr[79] = (nonce >>> 24) & 255;
+            const d = dsha(hdr);
+            tries++;
+            if (d[31] === 0 && d[30] === 0) { finish(nonce, display(d), tries, performance.now() - t0); return; }
+            last = d;
+            nonce++;
+          }
+        }
+        nonceT.textContent = fmt(nonce);
+        showHash(display(last));
+        status.textContent = `채굴 중… 논스를 바꿔 가며 ${fmt(tries)}번 해시했습니다.`;
+        timer = setTimeout(step, 0);
+      };
+      step();
+    }
+    btn.addEventListener('click', mine);
+    resetBtn.addEventListener('click', reset);
+    reset();
   });
 
   /* ---------- 실습 3: 머클 트리 ---------- */
